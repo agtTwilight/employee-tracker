@@ -14,17 +14,23 @@ const db = mysql.createConnection(
 class View {
         // view all departments
         departments(){
-                db.query("SELECT * FROM department")
+                db.query("SELECT * FROM department", (err, results) => {
+                        console.log(results);
+                })
         }
 
         // view all roles
         roles(){
-                db.query("SELECT * FROM role")
+                db.query("SELECT * FROM role", (err, results) => {
+                        console.log(results);
+                })
         }
         
         // view all employees
         employees(){
-                db.query("SELECT * FROM employee")
+                db.query("SELECT * FROM employee", (err, results) => {
+                        console.log(results);
+                })
         }
 }
 
@@ -60,4 +66,11 @@ class Add {
         }
 }
 
-module.exports = {View, Add}
+// get departments
+// function departmentNames() {
+//         db.query("SELECT name FROM department INTO OUTFILE '../db/department_names.json' ", (err, results) => {
+//                 console.log("updated file")
+//         })
+// }
+
+module.exports = {View, Add, departmentNames}
