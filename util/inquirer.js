@@ -87,6 +87,11 @@ const mainMenu = async () => {
                                                 message: "Title of new role:"
                                         },
                                         {
+                                                type: "input",
+                                                name: "salary",
+                                                message: "What is the salary of this position?"
+                                        },
+                                        {
                                                 type: "list",
                                                 name: "department_name",
                                                 message: "Which department is this role affiliated with?",
@@ -95,10 +100,15 @@ const mainMenu = async () => {
                                                 })
                                         }
                                  ]);
-                                Add.role(newObject.title, newObject.department_name.charAt());
+                                Add.role(newObject.title, newObject.salary, newObject.department_name.charAt());
                                 View.roles();
                         } else {
                                 const roles = await queries.getRoleTitles();
+                                let employees = await queries.getEmployees();
+                                employees = await employees.map((manager) => {
+                                        return(`${manager.id}. ${manager.first_name}`);
+                                })
+                                employees.push("n/a")
                                 const newObject = await inquirer.prompt([
                                         {
                                                 type: "input",
@@ -117,9 +127,19 @@ const mainMenu = async () => {
                                                 choices: roles.map((role) => {
                                                         return(`${role.id}. ${role.title}`);
                                                 })
+                                        },
+                                        {
+                                                type: "list",
+                                                name: "manager",
+                                                message: "Who is this employees manager?",
+                                                choices: employees
                                         }
                                  ]);
-                                Add.employee(newObject.first_name, newObject.last_name, newObject.employee_role.charAt());
+                                 if(newObject.manager === "n/a") {
+                                         Add.employee(newObject.first_name, newObject.last_name, newObject.employee_role.charAt(), null);
+                                        } else {
+                                                Add.employee(newObject.first_name, newObject.last_name, newObject.employee_role.charAt(), newObject.manager.charAt());
+                                        }
                                 View.employees();
                         }
                 }
@@ -129,18 +149,5 @@ const mainMenu = async () => {
                 throw error
         }
 }
-
-// const test = async () => {
-//         try {
-//                 let asdf = await getAll()
-//                 asdf.map((d) => {
-//                         return(`${d.name},`) 
-//                 })
-//                 console.log(asdf)
-//         } catch (error) {
-//                 throw error
-//         }
-// } 
-// test()
 
 module.exports = {mainMenu}

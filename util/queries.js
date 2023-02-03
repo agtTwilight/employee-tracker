@@ -1,6 +1,5 @@
 // Query the database
 const mysql = require("mysql2");
-// TODO wrap all this in an async await function so test gets updated after department names is executed!
 const db = mysql.createConnection(
         {
                 host: '127.0.0.1',
@@ -43,16 +42,16 @@ class Add {
                 })
         }
 
-        role(title, department) {
-                db.query("INSERT INTO role (title, department_id) VALUES(?,?)", [title, department],  (err, data) => {
+        role(title, salary, department) {
+                db.query("INSERT INTO role (title, salary, department_id) VALUES(?,?,?)", [title, salary, department],  (err, data) => {
                         if (err){
                                 throw err
                         }
                 })
         }
 
-        employee(first_name, last_name, role) {
-                db.query("INSERT INTO employee(first_name, last_name, role_id) VALUES(?,?,?)", [first_name, last_name, role],  (err, data) => {
+        employee(first_name, last_name, role, manager) {
+                db.query("INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES(?,?,?,?)", [first_name, last_name, role, manager],  (err, data) => {
                         if (err){
                                 throw err
                         }
@@ -60,7 +59,6 @@ class Add {
         }
 }
 
-// TODO make this called by a local function. Give it local functions input
 function getDepartmentNames () {
         return db
                 .promise()
@@ -78,5 +76,14 @@ function getRoleTitles () {
                         return row
                 })
 }
+ 
+function getEmployees () {
+        return db
+                .promise()
+                .query("SELECT * FROM employee")
+                .then(([row]) => {
+                        return row
+                })
+}
 
-module.exports = {View, Add, getDepartmentNames, getRoleTitles}
+module.exports = {View, Add, getDepartmentNames, getRoleTitles, getEmployees}
