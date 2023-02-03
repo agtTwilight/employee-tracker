@@ -2,6 +2,8 @@
 # employee-tracker
 ![badge](https://img.shields.io/badge/License-MIT-yellow.svg)
 
+Link to demo: https://drive.google.com/file/d/14_iSGEH-bB1RH4o4LaY29CbijGs9TuXS/view?usp=sharing
+
 ## Description
 **What was your motivation?** <br>
 I wanted to create databases with sql, access them with node, and interact with them using inquirer. <br><br>

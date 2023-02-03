@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/agtTwilight/employee-tracker#readme",
   "dependencies": {
+    "console.table": "^0.10.0",
     "inquirer": "^6.3.1",
     "mysql2": "^2.2.5"
   }
