@@ -130,17 +130,4 @@ const mainMenu = async () => {
         }
 }
 
-// const test = async () => {
-//         try {
-//                 let asdf = await getAll()
-//                 asdf.map((d) => {
-//                         return(`${d.name},`) 
-//                 })
-//                 console.log(asdf)
-//         } catch (error) {
-//                 throw error
-//         }
-// } 
-// test()
-
 module.exports = {mainMenu}

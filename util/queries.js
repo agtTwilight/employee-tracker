@@ -1,6 +1,6 @@
 // Query the database
 const mysql = require("mysql2");
-// TODO wrap all this in an async await function so test gets updated after department names is executed!
+
 const db = mysql.createConnection(
         {
                 host: '127.0.0.1',
@@ -60,7 +60,7 @@ class Add {
         }
 }
 
-// TODO make this called by a local function. Give it local functions input
+
 function getDepartmentNames () {
         return db
                 .promise()
