@@ -1,6 +1,6 @@
 // Query the database
 const mysql = require("mysql2");
-
+// TODO wrap all this in an async await function so test gets updated after department names is executed!
 const db = mysql.createConnection(
         {
                 host: '127.0.0.1',
@@ -15,21 +15,21 @@ class View {
         // view all departments
         departments(){
                 db.query("SELECT * FROM department", (err, results) => {
-                        console.log(results);
+                        console.table(results);
                 })
         }
 
         // view all roles
         roles(){
                 db.query("SELECT * FROM role", (err, results) => {
-                        console.log(results);
+                        console.table(results);
                 })
         }
         
         // view all employees
         employees(){
                 db.query("SELECT * FROM employee", (err, results) => {
-                        console.log(results);
+                        console.table(results);
                 })
         }
 }
@@ -39,38 +39,44 @@ class Add {
                 db.query("INSERT INTO department(name) VALUES(?)", name,  (err, data) => {
                         if (err){
                                 throw err
-                        } else {
-                                console.log(data)
                         }
                 })
         }
 
         role(title, department) {
-                db.query("INSERT INTO role(title, department_id) VALUES(?)", [title, department],  (err, data) => {
+                db.query("INSERT INTO role (title, department_id) VALUES(?,?)", [title, department],  (err, data) => {
                         if (err){
                                 throw err
-                        } else {
-                                console.log(data)
                         }
                 })
         }
 
         employee(first_name, last_name, role) {
-                db.query("INSERT INTO employee(first_name, last_name, role_id) VALUES(?)", [first_name, last_name, role],  (err, data) => {
+                db.query("INSERT INTO employee(first_name, last_name, role_id) VALUES(?,?,?)", [first_name, last_name, role],  (err, data) => {
                         if (err){
                                 throw err
-                        } else {
-                                console.log(data)
                         }
                 })
         }
 }
 
-// get departments
-// function departmentNames() {
-//         db.query("SELECT name FROM department INTO OUTFILE '../db/department_names.json' ", (err, results) => {
-//                 console.log("updated file")
-//         })
-// }
+// TODO make this called by a local function. Give it local functions input
+function getDepartmentNames () {
+        return db
+                .promise()
+                .query("SELECT * FROM department")
+                .then(([row]) => {
+                        return row
+                })
+}
 
-module.exports = {View, Add, departmentNames}
+function getRoleTitles () {
+        return db
+                .promise()
+                .query("SELECT * FROM role")
+                .then(([row]) => {
+                        return row
+                })
+}
+
+module.exports = {View, Add, getDepartmentNames, getRoleTitles}
