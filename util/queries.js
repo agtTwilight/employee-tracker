@@ -1,5 +1,6 @@
 // Query the database
 const mysql = require("mysql2");
+
 const db = mysql.createConnection(
         {
                 host: '127.0.0.1',
@@ -27,8 +28,32 @@ class View {
         
         // view all employees
         employees(){
-                db.query("SELECT * FROM employee", (err, results) => {
-                        console.table(results);
+                db.query("SELECT * FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department AS department ON role.department_id = department.id", (err, results) => {
+                        const toRemove = ["(index)", "department_id", "role_id"]
+                        for (let y = 0; y < results.length; y ++) {
+                                for (let i = 0; i < toRemove.length; i ++) {
+                                        delete results[y][toRemove[i]]
+                                }
+
+                                results[y]["department"] = results[y]["name"]
+                                delete results[y]["name"]
+
+                                if (results[y]["manager_id"] === null){
+                                        delete results[y]["manager_id"]
+                                }
+                                
+                                if (results[y]["manager_id"] != null) {
+                                        getEmployees().then((managers) => {
+                                                for (let j = 0; j < managers.length; j ++) {
+                                                        if (managers[j].id === results[y]["manager_id"]) {
+                                                                delete results[y]["manager_id"]
+                                                                results[y]["manager"] = managers[j].first_name + " " + managers[j].last_name
+                                                                console.table(results)
+                                                        }
+                                                }
+                                        })
+                                }
+                        }
                 })
         }
 }
