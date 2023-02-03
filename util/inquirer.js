@@ -1,10 +1,12 @@
 // Inquirer Functions
-const inquirer = require("inquirer")
+const inquirer = require("inquirer");
+const { update } = require("lodash");
 const queries = require("./queries");
 const View = new queries.View;
 const Add = new queries.Add;
 const getDepartmentNames = queries.getDepartmentNames
 const getRoleTitles = queries.getRoleTitles
+const updateEmployee = queries.updateEmployee
 
 // A list of inquirer prompts to be used in the subMenus func
 // TODO insert the choices lists within the object
@@ -46,7 +48,7 @@ const mainMenu = async () => {
                                 type: 'list',
                                 name: 'option',
                                 message: 'What would you like to do?',
-                                choices: ['view all departments', 'view all roles', 'view all employees', 'add department', 'add role', 'add employee', 'exit'] 
+                                choices: ['view all departments', 'view all roles', 'view all employees', 'add department', 'add role', 'add employee', 'update', 'exit'] 
                         }
                 ])
 
@@ -64,7 +66,7 @@ const mainMenu = async () => {
                         } else {
                                 View.employees()
                         }
-                } else {
+                } else if(choice.includes("add")) {
                         // if 'view' isn't within the choice string returned from mainMenu, then you know the user wants to add something! The following code allows just that.
                         // we will need to split choices to identify what specifically they want to do.
                         const arr = choice.split(" ");
@@ -136,12 +138,42 @@ const mainMenu = async () => {
                                         }
                                  ]);
                                  if(newObject.manager === "n/a") {
-                                         Add.employee(newObject.first_name, newObject.last_name, newObject.employee_role.charAt(), null);
+                                         await Add.employee(newObject.first_name, newObject.last_name, newObject.employee_role.charAt(), null);
                                         } else {
-                                                Add.employee(newObject.first_name, newObject.last_name, newObject.employee_role.charAt(), newObject.manager.charAt());
+                                                await Add.employee(newObject.first_name, newObject.last_name, newObject.employee_role.charAt(), newObject.manager.charAt());
                                         }
-                                View.employees();
+                                await View.employees();
                         }
+                } else if(choice.includes("update")) {
+                        let employees = await queries.getEmployees();
+                        employees = await employees.map((employee) => {
+                                return(`${employee.first_name}`);
+                        })
+                        const roles = await queries.getRoleTitles();
+
+                        const updatedObject = await inquirer.prompt([
+                                {
+                                        type: "list",
+                                        name: "employee",
+                                        message: "Which employee would you like to update?",
+                                        choices: employees
+                                },
+                                {
+                                        type: "list",
+                                        name: "role",
+                                        message: "What should their new role be?",
+                                        choices: roles.map((role) => {
+                                                return(`${role.id}. ${role.title}`);
+                                        })
+                                }
+                        ])
+                        
+                        await updateEmployee(updatedObject.employee, updatedObject.role.charAt())
+                        console.log("role updated")
+                        await View.employees()
+
+                } else {
+                        return "exit"
                 }
                 return choice
         } 

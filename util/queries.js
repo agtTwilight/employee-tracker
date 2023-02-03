@@ -15,6 +15,9 @@ class View {
         // view all departments
         departments(){
                 db.query("SELECT * FROM department", (err, results) => {
+                        console.log(`
+
+                        `)
                         console.table(results);
                 })
         }
@@ -22,6 +25,9 @@ class View {
         // view all roles
         roles(){
                 db.query("SELECT * FROM role", (err, results) => {
+                        console.log(`
+                        
+                        `)
                         console.table(results);
                 })
         }
@@ -48,6 +54,9 @@ class View {
                                                         if (managers[j].id === results[y]["manager_id"]) {
                                                                 delete results[y]["manager_id"]
                                                                 results[y]["manager"] = managers[j].first_name + " " + managers[j].last_name
+                                                                console.log(`
+                        
+                                                                `)
                                                                 console.table(results)
                                                         }
                                                 }
@@ -111,4 +120,12 @@ function getEmployees () {
                 })
 }
 
-module.exports = {View, Add, getDepartmentNames, getRoleTitles, getEmployees}
+function updateEmployee (employee, role) {
+        db.query("UPDATE employee SET role_id = ? WHERE first_name = ?", [role,employee], (err, data) => {
+                if (err){
+                        throw err
+                }
+        })
+}
+
+module.exports = {View, Add, getDepartmentNames, getRoleTitles, getEmployees, updateEmployee}
